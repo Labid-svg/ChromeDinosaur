@@ -1,6 +1,6 @@
 # ChromeDinosaur
 
-This is a Chrome browser's offline Dinosaur Game created by using Java Language. in this game, Dinosaur will be running to the right when the game strarted and cactus will be coming from the left, which are randomly generated using the function Math.random(). Besides the score will be incrementing until the dinosaur collides with the cactus. 
+This is a Chrome browser's offline Dinosaur Game created by using Java Language. in this game, Dinosaur will be running to the right when the game strarted and cactus and bird will be coming from the left, which are randomly generated using the function Math.random(). Besides the score will be incrementing until the dinosaur collides with the cactus. 
 
 Command: Player needs to press the SPACE key to jump over the cactus. Dinosaur can't able to jump double time until it go back to the ground.
 
