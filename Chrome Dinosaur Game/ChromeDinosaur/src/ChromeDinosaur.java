@@ -38,10 +38,24 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
     Block dinosaur;
 
+    nt cactus1Width = 30;
+    int cactus2Width = 60;
+    int cactus3Width = 100;
+
+    int cactusHeight = 70;
+    int cactusX = 700;
+    int cactusY = boardHeight - cactusHeight;
+
+    ArrayList<Block>cactusArray;
+
+    int velocityCX = -10; // cactus velocity
     int velocityY = 0; // Dinosaur jumping speed
     int gravity = 1;
 
+    boolean gameOver = false;
+
     Timer gameLoop;
+    Timer placeCactusTimer;
 
     public ChromeDinosaur(){
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -58,9 +72,40 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
         dinosaur = new Block(dinosaurX, dinosaurY, dinosaurWidth, dinosaurHeight, dinosaurImg);
 
+        cactusArray = new ArrayList<>();
+        
         gameLoop = new Timer(1000/60, this);
         gameLoop.start();
     }
+
+           placeCactusTimer = new Timer(1500, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e){
+            placeCactus();
+        }
+        });
+        placeCactusTimer.start();
+    }
+
+    void placeCactus(){
+        if(gameOver){
+            return;
+        }
+        double placeCactusChance = Math.random();
+        if(placeCactusChance > 0.90){
+            Block cactus = new Block(cactusX, cactusY, cactus3Width, cactusHeight, cactus3Img);
+            cactusArray.add(cactus);
+        }
+        else if(placeCactusChance > 0.70){
+            Block cactus = new Block(cactusX, cactusY, cactus2Width, cactusHeight, cactus2Img);
+            cactusArray.add(cactus);
+        }
+        else if(placeCactusChance > 0.50){
+            Block cactus = new Block(cactusX, cactusY,cactus1Width,cactusHeight, cactus1Img);
+            cactusArray.add(cactus);
+        }
+    }
+
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -69,6 +114,11 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
     public void draw(Graphics g){
         g.drawImage(dinosaur.img, dinosaur.x, dinosaur.y, dinosaur.width, dinosaur.height, null);
+    
+        for(int i = 0; i<cactusArray.size(); i++){
+            Block cactus = cactusArray.get(i);
+            g.drawImage(cactus.img, cactus.x, cactus.y ,cactus.width, cactus.height,null);
+        }
     }
 
 
@@ -80,6 +130,11 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
             dinosaur.y = dinosaurY;
             velocityY = 0;
             dinosaur.img = dinosaurImg;
+        }
+
+        for(int i = 0; i < cactusArray.size(); i++){
+            Block cactus = cactusArray.get(i);
+            cactus.x += velocityCX;
         }
     }
 
