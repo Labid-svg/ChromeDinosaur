@@ -119,6 +119,16 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
             Block cactus = cactusArray.get(i);
             g.drawImage(cactus.img, cactus.x, cactus.y ,cactus.width, cactus.height,null);
         }
+        
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.PLAIN, 36));
+
+        if(gameOver){
+            g.drawString("Game Over: " + String.valueOf(score), 10, 30);
+        }
+        else{
+            g.drawString(String.valueOf(score), 10, 30);
+        }
     }
 
 
@@ -141,6 +151,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
                 dinosaur.img = dinosaurDeadImg;
             }
         }
+        score++;
     }
 
     boolean collision(Block a, Block b){
@@ -165,7 +176,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
     public void keyPressed(KeyEvent e) { 
         if(e.getKeyCode() == KeyEvent.VK_SPACE){
             if(dinosaur.y == dinosaurY){
-            velocityY = -17;
+            velocityY = -18;
             dinosaur.img = dinosaurJumpImg;
             }
         }
