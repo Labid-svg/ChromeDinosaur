@@ -16,6 +16,9 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
     Image cactus3Img;
     Image gameoverImg;
     Image resetImg;
+    Image trackImg;
+    Image birdImg;
+    Image birdDeadImg;
 
     class Block{
         int x;
@@ -52,6 +55,14 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
     ArrayList<Block>cactusArray;
 
+    // Bird
+    int birdWidth = 50;
+    int birdHeight = 60;
+    int birdX = 1400;
+    int birdY = 70;
+
+    ArrayList<Block>birdArray;
+
     // GameOver
     int gameoverX = 150;
     int gameoverY = 60;
@@ -68,7 +79,16 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
     Block reset;
 
+    // Track
+    int trackWidth = 850;
+    int trackHeight = 15;
+    int trackX = 0;
+    int trackY = boardHeight - trackHeight;
+
+    Block track;
+
     int velocityCX = -10; // cactus velocity
+    int velocityBX = -15; // bid velocity
     int velocityY = 0; // jumping speed
     int gravity = 1;
 
@@ -77,6 +97,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
     Timer gameLoop;
     Timer placeCactusTimer;
+    Timer placeBirdTimer;
 
     public ChromeDinosaur(){
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -92,6 +113,9 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         cactus3Img = new ImageIcon(getClass().getResource("./img/cactus3.png")).getImage();
         gameoverImg = new ImageIcon(getClass().getResource("./img/game-over.png")).getImage();
         resetImg = new ImageIcon(getClass().getResource("./img/reset.png")).getImage();
+        trackImg = new ImageIcon(getClass().getResource("./img/track.png")).getImage();
+        birdImg = new ImageIcon(getClass().getResource("./img/bird.gif")).getImage();
+        birdDeadImg = new ImageIcon(getClass().getResource("./img/bird1.png")).getImage();
 
         dinosaur = new Block(dinosaurX, dinosaurY, dinosaurWidth, dinosaurHeight, dinosaurImg);
 
@@ -99,7 +123,10 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
         reset = new Block( resetX, resetY, resetWidth, resetHeight,resetImg);
 
+        track = new Block(trackX, trackY, trackWidth, trackHeight, trackImg);
+
         cactusArray = new ArrayList<>();
+        birdArray = new ArrayList<>();
 
         gameLoop = new Timer(1000/60, this);
         gameLoop.start();
@@ -112,10 +139,19 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         }
         });
         placeCactusTimer.start();
+
+        placeBirdTimer = new Timer(5000, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                placeBird();
+            }
+        });
+        placeBirdTimer.start();
     }
 
     void placeCactus(){
-        if(gameOver){
+        if(gameOver || !birdArray.isEmpty()){
             return;
         }
         double placeCactusChance = Math.random();
@@ -133,17 +169,36 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         }
     }
 
+    void placeBird(){
+        if(gameOver || !cactusArray.isEmpty()){
+            return;
+        }
+        double placeBirdChance = Math.random();
+        if(placeBirdChance > 0.00 || placeBirdChance < 0.20 ){
+            Block bird = new Block(birdX, birdY, birdWidth, birdHeight, birdImg);
+            birdArray.add(bird);
+        }
+    }
+
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         draw(g);
     }
 
     public void draw(Graphics g){
+        
+        g.drawImage(track.img, track.x, track.y, track.width, track.height, null);
+
         g.drawImage(dinosaur.img, dinosaur.x, dinosaur.y, dinosaur.width, dinosaur.height, null);
-    
+
         for(int i = 0; i<cactusArray.size(); i++){
             Block cactus = cactusArray.get(i);
             g.drawImage(cactus.img, cactus.x, cactus.y ,cactus.width, cactus.height,null);
+        }
+
+        for(int i = 0; i< birdArray.size(); i++){
+            Block bird = birdArray.get(i);
+            g.drawImage(bird.img, bird.x, bird.y, bird.width, bird.height, null);
         }
 
         g.setColor(Color.RED);
@@ -174,9 +229,34 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
             Block cactus = cactusArray.get(i);
             cactus.x += velocityCX;
 
+        if(cactus.x + cactus.width < 0) {
+            cactusArray.remove(i);
+            i--;
+            continue;
+    }
+
             if(collision(dinosaur, cactus)){
                 gameOver = true;
                 dinosaur.img = dinosaurDeadImg;
+                gameover.img = gameoverImg;
+                reset.img = resetImg;
+            }
+        }
+
+        for(int i = 0; i < birdArray.size(); i++){
+            Block bird = birdArray.get(i);
+            bird.x += velocityBX;
+
+        if(bird.x + bird.width < 0) {
+            birdArray.remove(i);
+            i--;
+            continue;
+    }
+
+            if(collision(dinosaur, bird)){
+                gameOver = true;
+                dinosaur.img = dinosaurDeadImg;
+                bird.img = birdDeadImg;
                 gameover.img = gameoverImg;
                 reset.img = resetImg;
             }
@@ -191,19 +271,13 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
     }
 
-        // For Block a (Dinosaur):
-        // Left   = a.x , Right  = a.x + a.width, Top = a.y, Bottom = a.y + a.height;
-    // For Block b (cactus):
-        // Left   = b.x , Right  = b.x + b.width, Top = b.y, Bottom = b.y + b.height;
-
-    // mainly checking horizontal overlapping and vertical overlapping
-
     @Override
     public void actionPerformed(ActionEvent e) {
         move();
         repaint();
         if(gameOver){
             placeCactusTimer.stop();
+            placeBirdTimer.stop();
             gameLoop.stop();
         }
     }
@@ -227,6 +301,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
             gameOver = false;
             gameLoop.start();
             placeCactusTimer.start();
+            placeBirdTimer.start();
         }
     }
 
