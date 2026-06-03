@@ -173,6 +173,13 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
     }
 
+    // For Block a (Dinosaur):
+        // Left   = a.x , Right  = a.x + a.width, Top = a.y, Bottom = a.y + a.height;
+    // For Block b (cactus):
+        // Left   = b.x , Right  = b.x + b.width, Top = b.y, Bottom = b.y + b.height;
+
+    // mainly checking horizontal overlapping and vertical overlapping
+
     @Override
     public void actionPerformed(ActionEvent e) {
         move();
