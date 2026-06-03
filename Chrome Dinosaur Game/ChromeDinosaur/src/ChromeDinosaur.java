@@ -135,14 +135,29 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         for(int i = 0; i < cactusArray.size(); i++){
             Block cactus = cactusArray.get(i);
             cactus.x += velocityCX;
+
+            if(collision(dinosaur, cactus)){
+                gameOver = true;
+                dinosaur.img = dinosaurDeadImg;
+            }
         }
     }
 
+    boolean collision(Block a, Block b){
+        return a.x < b.x + b.width && //a's top left corner doesn't reach b's top right corner
+        a.x + a.width > b.x && //a's top right corner passes b's top left corner
+        a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
+        a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         move();
         repaint();
+        if(gameOver){
+            placeCactusTimer.stop();
+            gameLoop.stop();
+        }
     }
 
 
@@ -153,6 +168,16 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
             velocityY = -17;
             dinosaur.img = dinosaurJumpImg;
             }
+        }
+        if(gameOver){
+            dinosaur.y = dinosaurY;
+            dinosaur.img = dinosaurImg;
+            velocityY = 0;
+            cactusArray.clear();
+            score = 0;
+            gameOver = false;
+            gameLoop.start();
+            placeCactusTimer.start();
         }
     }
 
