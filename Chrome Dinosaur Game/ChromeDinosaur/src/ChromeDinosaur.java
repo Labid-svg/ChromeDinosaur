@@ -15,6 +15,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
     Image cactus2Img;
     Image cactus3Img;
     Image gameoverImg;
+    Image resetImg;
 
     class Block{
         int x;
@@ -32,14 +33,15 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         }
     }
 
+    // Dinosaur
     int dinosaurWidth = 80;
     int dinosaurHeight = 90;
     int dinosaurX = 50;
     int dinosaurY = boardHeight - dinosaurHeight; // initial position of dinosaur
 
     Block dinosaur;
-    Block gameover;
 
+    // Cactus
     int cactus1Width = 30;
     int cactus2Width = 60;
     int cactus3Width = 100;
@@ -50,10 +52,21 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
     ArrayList<Block>cactusArray;
 
+    // GameOver
     int gameoverX = 150;
-    int gameoverY = 100;
+    int gameoverY = 60;
     int gameoverWidth = 600;
     int gameoverHeight = 100;
+
+    Block gameover;
+
+    // Reset
+    int resetX = 400;
+    int resetY = 140;
+    int resetWidth = 80;
+    int resetHeight = 80;
+
+    Block reset;
 
     int velocityCX = -10; // cactus velocity
     int velocityY = 0; // jumping speed
@@ -78,10 +91,13 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         cactus2Img = new ImageIcon(getClass().getResource("./img/cactus2.png")).getImage();
         cactus3Img = new ImageIcon(getClass().getResource("./img/cactus3.png")).getImage();
         gameoverImg = new ImageIcon(getClass().getResource("./img/game-over.png")).getImage();
+        resetImg = new ImageIcon(getClass().getResource("./img/reset.png")).getImage();
 
         dinosaur = new Block(dinosaurX, dinosaurY, dinosaurWidth, dinosaurHeight, dinosaurImg);
 
         gameover = new Block(gameoverX, gameoverY, gameoverWidth, gameoverHeight, gameoverImg);
+
+        reset = new Block( resetX, resetY, resetWidth, resetHeight,resetImg);
 
         cactusArray = new ArrayList<>();
 
@@ -130,12 +146,13 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
             g.drawImage(cactus.img, cactus.x, cactus.y ,cactus.width, cactus.height,null);
         }
 
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.PLAIN, 36));
+        g.setColor(Color.RED);
+        g.setFont(new Font("Roboto", Font.PLAIN, 36));
 
         if(gameOver){
             g.drawString("Game Over: " + String.valueOf(score), 10, 30);
-            g.drawImage(gameover.img, gameoverX, gameoverY, gameoverWidth, gameoverHeight, null);
+            g.drawImage(gameover.img, gameover.x, gameover.y, gameover.width, gameover.height, null);
+            g.drawImage(reset.img, reset.x, reset.y, reset.width, reset.height, null);
         }
         else{
             g.drawString(String.valueOf(score), 10, 30);
@@ -161,6 +178,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
                 gameOver = true;
                 dinosaur.img = dinosaurDeadImg;
                 gameover.img = gameoverImg;
+                reset.img = resetImg;
             }
         }
         score++;
@@ -173,7 +191,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
     }
 
-    // For Block a (Dinosaur):
+        // For Block a (Dinosaur):
         // Left   = a.x , Right  = a.x + a.width, Top = a.y, Bottom = a.y + a.height;
     // For Block b (cactus):
         // Left   = b.x , Right  = b.x + b.width, Top = b.y, Bottom = b.y + b.height;
