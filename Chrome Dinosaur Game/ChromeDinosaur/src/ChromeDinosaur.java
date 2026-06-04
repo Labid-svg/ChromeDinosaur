@@ -20,48 +20,48 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
     Image birdImg;
     Image birdDeadImg;
 
-    class Block{
-        int x;
-        int y;
-        int width;
-        int height;
-        Image img;
+    // class Block{
+    //     int x;
+    //     int y;
+    //     int width;
+    //     int height;
+    //     Image img;
 
-        Block(int x, int y, int width, int height, Image img){
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.img = img;
-        }
-    }
+    //     Block(int x, int y, int width, int height, Image img){
+    //         this.x = x;
+    //         this.y = y;
+    //         this.width = width;
+    //         this.height = height;
+    //         this.img = img;
+    //     }
+    // }
 
-    // Dinosaur
+    Dinosaur dinosaur;
+
     int dinosaurWidth = 80;
     int dinosaurHeight = 90;
     int dinosaurX = 50;
     int dinosaurY = boardHeight - dinosaurHeight; // initial position of dinosaur
 
-    Block dinosaur;
 
-    // Cactus
+    //Cactus
     int cactus1Width = 30;
     int cactus2Width = 60;
     int cactus3Width = 100;
 
     int cactusHeight = 70;
-    int cactusX = 700;
+    int cactusX = 800;
     int cactusY = boardHeight - cactusHeight;
 
-    ArrayList<Block>cactusArray;
+    ArrayList<Block> cactusArray;
 
     // Bird
     int birdWidth = 50;
     int birdHeight = 60;
-    int birdX = 1400;
+    int birdX = 1600;
     int birdY = 70;
 
-    ArrayList<Block>birdArray;
+    ArrayList<Block> birdArray;
 
     // GameOver
     int gameoverX = 150;
@@ -88,8 +88,8 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
     Block track;
 
     int velocityCX = -10; // cactus velocity
-    int velocityBX = -15; // bid velocity
-    int velocityY = 0; // jumping speed
+    int velocityBX = -15; // bird velocity
+    int velocityY = 0;    // jumping speed
     int gravity = 1;
 
     boolean gameOver = false;
@@ -114,34 +114,52 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         gameoverImg = new ImageIcon(getClass().getResource("./img/game-over.png")).getImage();
         resetImg = new ImageIcon(getClass().getResource("./img/reset.png")).getImage();
         trackImg = new ImageIcon(getClass().getResource("./img/track.png")).getImage();
-        birdImg = new ImageIcon(getClass().getResource("./img/bird.gif")).getImage();
+        birdImg  = new ImageIcon(getClass().getResource("./img/bird.gif")).getImage();
         birdDeadImg = new ImageIcon(getClass().getResource("./img/bird1.png")).getImage();
 
-        dinosaur = new Block(dinosaurX, dinosaurY, dinosaurWidth, dinosaurHeight, dinosaurImg);
+        dinosaur = new Dinosaur(dinosaurX, dinosaurY,dinosaurWidth, dinosaurHeight,dinosaurImg, dinosaurDeadImg, dinosaurJumpImg);
 
-        gameover = new Block(gameoverX, gameoverY, gameoverWidth, gameoverHeight, gameoverImg);
+        gameover = new Block(gameoverX, gameoverY, gameoverWidth, gameoverHeight, gameoverImg){
+            @Override 
+            public void update() {}
 
-        reset = new Block( resetX, resetY, resetWidth, resetHeight,resetImg);
+            @Override 
+            public void draw(Graphics g) {}
+        };
 
-        track = new Block(trackX, trackY, trackWidth, trackHeight, trackImg);
+        reset = new Block(resetX, resetY, resetWidth, resetHeight, resetImg){
+
+            @Override
+            public void update() {}
+
+            @Override 
+            public void draw(Graphics g) {}
+        };
+
+        track = new Block(trackX, trackY, trackWidth, trackHeight, trackImg){
+
+            @Override
+            public void update() {}
+
+            @Override 
+            public void draw(Graphics g) {}
+        };
 
         cactusArray = new ArrayList<>();
-        birdArray = new ArrayList<>();
+        birdArray   = new ArrayList<>();
 
         gameLoop = new Timer(1000/60, this);
         gameLoop.start();
 
         placeCactusTimer = new Timer(1500, new ActionListener() {
-        
             @Override
-        public void actionPerformed(ActionEvent e){
-            placeCactus();
-        }
+            public void actionPerformed(ActionEvent e){
+                placeCactus();
+            }
         });
         placeCactusTimer.start();
 
         placeBirdTimer = new Timer(5000, new ActionListener() {
-            
             @Override
             public void actionPerformed(ActionEvent e){
                 placeBird();
@@ -156,15 +174,15 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         }
         double placeCactusChance = Math.random();
         if(placeCactusChance > 0.90){
-            Block cactus = new Block(cactusX, cactusY, cactus3Width, cactusHeight, cactus3Img);
+            Cactus cactus = new Cactus(cactusX, cactusY, cactus3Width, cactusHeight, cactus3Img, velocityCX);
             cactusArray.add(cactus);
         }
         else if(placeCactusChance > 0.70){
-            Block cactus = new Block(cactusX, cactusY, cactus2Width, cactusHeight, cactus2Img);
+            Cactus cactus = new Cactus(cactusX, cactusY, cactus2Width, cactusHeight, cactus2Img, velocityCX);
             cactusArray.add(cactus);
         }
         else if(placeCactusChance > 0.50){
-            Block cactus = new Block(cactusX, cactusY,cactus1Width,cactusHeight, cactus1Img);
+            Cactus cactus = new Cactus(cactusX, cactusY, cactus1Width, cactusHeight, cactus1Img, velocityCX);
             cactusArray.add(cactus);
         }
     }
@@ -173,9 +191,10 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         if(gameOver || !cactusArray.isEmpty()){
             return;
         }
+
         double placeBirdChance = Math.random();
-        if(placeBirdChance > 0.00 || placeBirdChance < 0.20 ){
-            Block bird = new Block(birdX, birdY, birdWidth, birdHeight, birdImg);
+        if(placeBirdChance > 0.00 && placeBirdChance < 0.20){
+            Bird bird = new Bird(birdX, birdY, birdWidth, birdHeight, birdImg, velocityBX, birdDeadImg);
             birdArray.add(bird);
         }
     }
@@ -186,19 +205,20 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
     }
 
     public void draw(Graphics g){
-        
-        g.drawImage(track.img, track.x, track.y, track.width, track.height, null);
+        g.drawImage(track.getImg(), track.getX(), track.getY(), track.getWidth(), track.getHeight(), null);
+        // g.drawImage(dinosaur.img, dinosaur.x, dinosaur.y, dinosaur.width, dinosaur.height, null);
+        dinosaur.draw(g);
 
-        g.drawImage(dinosaur.img, dinosaur.x, dinosaur.y, dinosaur.width, dinosaur.height, null);
-
-        for(int i = 0; i<cactusArray.size(); i++){
+        for(int i = 0; i < cactusArray.size(); i++){
             Block cactus = cactusArray.get(i);
-            g.drawImage(cactus.img, cactus.x, cactus.y ,cactus.width, cactus.height,null);
+            cactus.draw(g);
+            // g.drawImage(cactus.img, cactus.x, cactus.y ,cactus.width, cactus.height,null);
         }
 
-        for(int i = 0; i< birdArray.size(); i++){
+        for(int i = 0; i < birdArray.size(); i++){
             Block bird = birdArray.get(i);
-            g.drawImage(bird.img, bird.x, bird.y, bird.width, bird.height, null);
+            bird.draw(g);
+            // g.drawImage(bird.img, bird.x, bird.y, bird.width, bird.height, null);
         }
 
         g.setColor(Color.RED);
@@ -206,8 +226,8 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
         if(gameOver){
             g.drawString("Game Over: " + String.valueOf(score), 10, 30);
-            g.drawImage(gameover.img, gameover.x, gameover.y, gameover.width, gameover.height, null);
-            g.drawImage(reset.img, reset.x, reset.y, reset.width, reset.height, null);
+            g.drawImage(gameover.getImg(), gameover.getX(), gameover.getY(), gameover.getWidth(), gameover.getHeight(), null);
+            g.drawImage(reset.getImg(), reset.getX(), reset.getY(), reset.getWidth(), reset.getHeight(), null);
         }
         else{
             g.drawString(String.valueOf(score), 10, 30);
@@ -216,59 +236,71 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
 
 
     public void move(){
-        velocityY += gravity;
-        dinosaur.y += velocityY;
+        dinosaur.update();
+        // velocityY += gravity;
+        // dinosaur.y += velocityY;
 
-        if(dinosaur.y > dinosaurY){
-            dinosaur.y = dinosaurY;
-            velocityY = 0;
-            dinosaur.img = dinosaurImg;
-        }
+        // if(dinosaur.y > dinosaurY){
+        //     dinosaur.y = dinosaurY;
+        //     velocityY = 0;
+        //     dinosaur.img = dinosaurImg;
+        // }
 
         for(int i = 0; i < cactusArray.size(); i++){
             Block cactus = cactusArray.get(i);
-            cactus.x += velocityCX;
+            // cactus.x += velocityCX;
+            cactus.update();
 
-        if(cactus.x + cactus.width < 0) {
-            cactusArray.remove(i);
-            i--;
-            continue;
-    }
+            if(cactus.getX() + cactus.getWidth() < 0){
+                cactusArray.remove(i);
+                i--;
+                continue;
+            }
 
             if(collision(dinosaur, cactus)){
                 gameOver = true;
-                dinosaur.img = dinosaurDeadImg;
-                gameover.img = gameoverImg;
-                reset.img = resetImg;
+                dinosaur.die();
+                // dinosaur.img = dinosaurDeadImg;
+                gameover.setImg(gameoverImg);
+                reset.setImg(resetImg);
             }
         }
 
         for(int i = 0; i < birdArray.size(); i++){
             Block bird = birdArray.get(i);
-            bird.x += velocityBX;
+            // bird.x += velocityBX;
+            bird.update();
 
-        if(bird.x + bird.width < 0) {
-            birdArray.remove(i);
-            i--;
-            continue;
-    }
+            if(bird.getX() + bird.getWidth() < 0){
+                birdArray.remove(i);
+                i--;
+                continue;
+            }
 
             if(collision(dinosaur, bird)){
                 gameOver = true;
-                dinosaur.img = dinosaurDeadImg;
-                bird.img = birdDeadImg;
-                gameover.img = gameoverImg;
-                reset.img = resetImg;
+                dinosaur.die();
+                // dinosaur.img = dinosaurDeadImg;
+                bird.setImg(birdDeadImg);
+                gameover.setImg(gameoverImg);
+                reset.setImg(resetImg);
             }
         }
         score++;
     }
 
     boolean collision(Block a, Block b){
-        return a.x < b.x + b.width && //a's top left corner doesn't reach b's top right corner
-        a.x + a.width > b.x && //a's top right corner passes b's top left corner
-        a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
-        a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
+        return a.getX() < b.getX() + b.getWidth()   && // a's top left corner doesn't reach b's top right corner
+               a.getX() + a.getWidth()  > b.getX()  && // a's top right corner passes b's top left corner
+               a.getY() < b.getY() + b.getHeight()  && // a's top left corner doesn't reach b's bottom left corner
+               a.getY() + a.getHeight() > b.getY();
+
+        // For Block a (Dinosaur):
+        // Left   = a.x , Right  = a.x + a.width, Top = a.y, Bottom = a.y + a.height;
+    // For Block b (cactus):
+        // Left   = b.x , Right  = b.x + b.width, Top = b.y, Bottom = b.y + b.height;
+
+    // mainly checking horizontal overlapping and vertical overlapping
     }
 
     @Override
@@ -282,21 +314,23 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         }
     }
 
-
     @Override
-    public void keyPressed(KeyEvent e) { 
+    public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_SPACE){
-            if(dinosaur.y == dinosaurY){
-            velocityY = -18;
-            dinosaur.img = dinosaurJumpImg;
-            }
+            // if(dinosaur.y == dinosaurY){
+            // velocityY = -18;
+            // dinosaur.img = dinosaurJumpImg;
+            // }
+            dinosaur.jump();
         }
 
         if(gameOver){
-            dinosaur.y = dinosaurY;
-            dinosaur.img = dinosaurImg;
-            velocityY = 0;
+            // dinosaur.y = dinosaurY;
+            // dinosaur.img = dinosaurImg;
+            // velocityY = 0;
+            dinosaur.back();
             cactusArray.clear();
+            birdArray.clear();   // Fixed: birds must also be cleared on reset
             score = 0;
             gameOver = false;
             gameLoop.start();
