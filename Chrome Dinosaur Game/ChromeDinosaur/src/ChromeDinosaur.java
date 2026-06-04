@@ -193,7 +193,7 @@ public class ChromeDinosaur extends JPanel implements ActionListener, KeyListene
         }
 
         double placeBirdChance = Math.random();
-        if(placeBirdChance > 0.00 && placeBirdChance < 0.20){
+        if(placeBirdChance > 0.00 || placeBirdChance < 0.20){
             Bird bird = new Bird(birdX, birdY, birdWidth, birdHeight, birdImg, velocityBX, birdDeadImg);
             birdArray.add(bird);
         }
