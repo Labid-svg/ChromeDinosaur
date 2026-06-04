@@ -15,3 +15,11 @@ This game is split into 6 files:
 7. ChromeDinosaur.java: This is the main game portion. Here, all fields and methods are initialized for all objects. 
 
 This Game is created using OOP Concepts like: Encapsulation, Abstraction, Inheritance, Interface, and Polymorphism.
+
+Game Interface: 
+<img width="850" height="286" alt="Screenshot from 2026-06-04 08-44-11" src="https://github.com/user-attachments/assets/589837f7-4558-48bf-bcfe-edb0657f6d02" />
+<img width="850" height="286" alt="Screenshot from 2026-06-04 08-42-45" src="https://github.com/user-attachments/assets/355a16b2-4ea4-4706-9f57-68e0e1e35c21" />
+
+Game Tutorial:
+[Screencast from 2026-06-04 08-44-23.webm](https://github.com/user-attachments/assets/53be2d6a-1642-4ce7-b0c9-63fb3e47f313)
+
