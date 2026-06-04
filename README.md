@@ -19,7 +19,9 @@ This Game is created using OOP Concepts like: Encapsulation, Abstraction, Inheri
 Game Interface: 
 
 <img width="850" height="286" alt="Screenshot from 2026-06-04 08-44-11" src="https://github.com/user-attachments/assets/589837f7-4558-48bf-bcfe-edb0657f6d02" /> </br>
-<img width="850" height="286" alt="Screenshot from 2026-06-04 08-42-45" src="https://github.com/user-attachments/assets/355a16b2-4ea4-4706-9f57-68e0e1e35c21" />
+<img width="850" height="286" alt="Screenshot from 2026-06-04 08-42-45" src="https://github.com/user-attachments/assets/355a16b2-4ea4-4706-9f57-68e0e1e35c21" /> </br>
+<img width="850" height="286" alt="Screenshot from 2026-06-04 08-48-42" src="https://github.com/user-attachments/assets/d629295b-0ab0-4166-8860-d268234295ab" />
+
 
 Game Tutorial:
 [Screencast from 2026-06-04 08-44-23.webm](https://github.com/user-attachments/assets/53be2d6a-1642-4ce7-b0c9-63fb3e47f313)
